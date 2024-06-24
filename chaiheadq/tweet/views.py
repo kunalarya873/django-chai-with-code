@@ -1,21 +1,23 @@
 from django.shortcuts import render, get_object_or_404, redirect
+import requests
 from .models import Tweet
 from .forms import TweetForm
 
 def tweet_list(request):
-    tweets=Tweet.objects.all().order_by('-created_at')
+    tweets = Tweet.objects.all().order_by('created_at')
     return render(request, 'tweet_list.html', {'tweets': tweets})
+
 def tweet_create(request):
     if request.method == 'POST':
         form = TweetForm(request.POST, request.FILES)
         if form.is_valid():
             tweet = form.save(commit=False)
             tweet.user = request.user
-            form.save()
+            tweet.save()
             return redirect('tweet_list')
-        else:
-            form= TweetForm()
-        return render(request, 'tweet_form.html', {'form': form})
+    else:
+        form= TweetForm()
+    return render(request, 'tweet_form.html', {'form': form})
 def tweet_edit(request, tweet_id):
     tweet = get_object_or_404(Tweet, pk=tweet_id, user= request.user)
     if request.method=="POST":
@@ -27,7 +29,8 @@ def tweet_edit(request, tweet_id):
             tweet.save()
             return redirect('tweet_list')
     else:
-        form= TweetForm(request, 'tweet_form.html', {'form': form})
+        form= TweetForm(instance=Tweet)
+    return render(request, 'tweet_form.html', {'form': form})
 
 def tweet_delete(request, tweet_id):
     tweet = get_object_or_404(Tweet, pk=tweet_id, user=request.user)
