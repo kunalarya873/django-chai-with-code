@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}<h1 class="d-flex justify-content-center align-self-center">Signup</h1>
+<form method="POST" class="d-flex justify-content-center align-items-center">
+    {% csrf_token %}
+    <div class="d-flex flex-column mb-3 form-group justify-content-center align-items-center m-3 p-2">
+    <div class="m-2 p-3">
+        {{ form.username }}
+    </div>
+    <div>
+        {{ form.password1 }}
+    </div>
+    <div>
+        {{ form.password2 }}
+    </div>
+
+    <button type="submit">Signup</button>
+    <a href="{% url 'login' %}">Already have account?</a>
+</div>
+</form>
+{% endblock %}
