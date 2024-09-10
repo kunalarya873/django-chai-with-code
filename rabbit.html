@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Interaction</title>
+</head>
+<body>
+    <h1>A rabbit is eating carrot that is fresh from the garden and orange in color</h1>
+    <button onclick="startNarration()">Play Narration</button>
+    <div id="question1">
+        <p>Who is eating a carrot?</p>
+        <button onclick="askQuestion('Who is eating a carrot?')">Record Answer</button>
+        <p id="answer1"></p>
+    </div>
+    <div id="question2">
+        <p>What is the rabbit eating?</p>
+        <button onclick="askQuestion('What is the rabbit eating?')">Record Answer</button>
+        <p id="answer2"></p>
+    </div>
+
+    <script>
+        const synth = window.speechSynthesis;
+
+        function startNarration() {
+            const text = "A rabbit is eating carrot that is fresh from the garden and orange in color";
+            const utterance = new SpeechSynthesisUtterance(text);
+            synth.speak(utterance);
+        }
+
+        function askQuestion(questionText) {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+
+            const utterance = new SpeechSynthesisUtterance(questionText);
+            synth.speak(utterance);
+
+            recognition.start();
+            recognition.onresult = (event) => {
+                const answer = event.results[0][0].transcript;
+                displayAnswer(questionText, answer);
+            };
+            recognition.onerror = (event) => {
+                console.error(event.error);
+            };
+        }
+
+        function displayAnswer(questionText, answer) {
+            if (questionText.includes('Who')) {
+                document.getElementById('answer1').textContent = "Answer: " + answer;
+            } else if (questionText.includes('What')) {
+                document.getElementById('answer2').textContent = "Answer: " + answer;
+            }
+        }
+    </script>
+</body>
+</html>
